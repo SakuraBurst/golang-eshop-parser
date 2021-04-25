@@ -35,5 +35,5 @@ func checkIsAllGameIdIsExist(gamesMap models.GamesMap, jsonFile io.WriterAt) mod
 	return gamesMap
 }
 func returnGameIds() {
-
+	//test
 }
