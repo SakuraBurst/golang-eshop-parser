@@ -15,6 +15,7 @@ func searcher(gameName string) string {
 	typedGamesSlice := getTypedGamesSlice(response)
 	game := getGame(typedGamesSlice, gameName)
 	gameId := getGameId(game)
+	fmt.Println(game["title"])
 	fmt.Println(gameId)
 	return gameId
 }

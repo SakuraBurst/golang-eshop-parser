@@ -1,30 +1,20 @@
 package environment
 
 import (
-	"encoding/json"
+	"eshop-parser/controller"
 	"eshop-parser/models"
 	"eshop-parser/repository"
 	"fmt"
 	"io"
-	"log"
 )
 
-func GetGameIds(filename string) []string {
+func GetGameMap(filename string) models.GamesMap {
 	gameJsonFile := repository.OpenFile(filename)
-	gameJsonMap := getGamesMap(gameJsonFile)
+	gameJsonMap := models.GamesMap{}
+	controller.FillFilesMap(gameJsonFile, &gameJsonMap)
 	checkIsAllGameIdIsExist(gameJsonMap, gameJsonFile)
 	fmt.Println(gameJsonMap)
-	return []string{"dfd"}
-}
-
-func getGamesMap(jsonFile io.Reader) models.GamesMap {
-	var file models.GamesMap
-	decoder := json.NewDecoder(jsonFile)
-	err := decoder.Decode(&file)
-	if err != nil {
-		log.Fatal("ошибочка при чтении файла", err)
-	}
-	return file
+	return gameJsonMap
 }
 
 func checkIsAllGameIdIsExist(gamesMap models.GamesMap, jsonFile io.WriterAt) models.GamesMap {
@@ -33,7 +23,4 @@ func checkIsAllGameIdIsExist(gamesMap models.GamesMap, jsonFile io.WriterAt) mod
 		repository.WriteFile(jsonFile, gamesMap)
 	}
 	return gamesMap
-}
-func returnGameIds() {
-	//test
 }
