@@ -1,6 +1,6 @@
 package models
 
-type GamesMap map[string]Game
+type GamesMap map[string]GameFromJson
 
 func (gamesMap GamesMap) GetGameIds() GamesMap {
 	for key, val := range gamesMap {

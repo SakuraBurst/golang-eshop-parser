@@ -1,23 +1,27 @@
 package models
 
 import (
-	"encoding/json"
+	"eshop-parser/controller"
 	"fmt"
-	"io"
-	"log"
-	"net/http"
 	"net/url"
 	"regexp"
 )
 
 func searcher(gameName string) string {
-	response := makeRequest(gameName)
+	searchUrl := createUrl(gameName)
+	response := makeRequest(searchUrl)
 	typedGamesSlice := getTypedGamesSlice(response)
 	game := getGame(typedGamesSlice, gameName)
 	gameId := getGameId(game)
 	fmt.Println(game["title"])
 	fmt.Println(gameId)
 	return gameId
+}
+
+func makeRequest(url string) Response {
+	var response Response
+	controller.MakeRequest(url, &response)
+	return response
 }
 
 func getTypedGamesSlice(resp Response) ResponseGameSlice {
@@ -37,33 +41,12 @@ func getTypedGamesSlice(resp Response) ResponseGameSlice {
 	return typedGamesSlice
 }
 
-func makeRequest(gameName string) Response {
-	searchUrl := createUrl(gameName)
-	httpResponse, err := http.Get(searchUrl)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer httpResponse.Body.Close()
-	response := decodeResponse(httpResponse.Body)
-	return response
-}
-
 func createUrl(gameName string) string {
 	var originalUrl string = "https://searching.nintendo-europe.com/ru/select?"
 	params := url.Values{}
 	params.Add("fq", "type:GAME AND ((playable_on_txt:\"HAC\"))")
 	params.Add("q", gameName)
 	return originalUrl + params.Encode()
-}
-
-func decodeResponse(body io.Reader) Response {
-	var response Response
-	decoder := json.NewDecoder(body)
-	err := decoder.Decode(&response)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return response
 }
 
 func getGame(gamesSlice ResponseGameSlice, gameName string) ResponseGame {
