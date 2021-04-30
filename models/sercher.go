@@ -1,7 +1,7 @@
 package models
 
 import (
-	"eshop-parser/controller"
+	"eshop-parser/requests"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -20,7 +20,7 @@ func searcher(gameName string) string {
 
 func makeRequest(url string) Response {
 	var response Response
-	controller.MakeRequest(url, &response)
+	requests.MakeRequest(url, &response)
 	return response
 }
 

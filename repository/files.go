@@ -2,7 +2,7 @@ package repository
 
 import (
 	"encoding/json"
-	"eshop-parser/models"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -16,13 +16,30 @@ func OpenFile(filename string) *os.File {
 	return f
 }
 
-func WriteFile(file io.WriterAt, gamesMap models.GamesMap) {
-	newJson, err := json.MarshalIndent(gamesMap, "", "  ")
+func WriteFile(file io.WriterAt, content interface{}) {
+	switch typedContent := content.(type) {
+	case []byte:
+		_, err := file.WriteAt(typedContent, 0)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
+	newJson, err := json.MarshalIndent(content, "", "  ")
 	if err != nil {
 		log.Fatal(err)
 	}
 	_, err = file.WriteAt(newJson, 0)
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func FillJsonMap(requestJson io.Reader, file interface{}) {
+	fmt.Println(requestJson)
+	decoder := json.NewDecoder(requestJson)
+	err := decoder.Decode(&file)
+	if err != nil {
+		log.Fatal("ошибочка при чтении файла", err)
 	}
 }

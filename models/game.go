@@ -1,7 +1,7 @@
 package models
 
 import (
-	"eshop-parser/controller"
+	"eshop-parser/requests"
 	"fmt"
 )
 
@@ -19,7 +19,7 @@ type GameResponse struct {
 func (gReq *GameRequest) Request() {
 	var resp map[string]interface{}
 	fmt.Println(gReq.GameId)
-	controller.MakeRequest("https://api.ec.nintendo.com/v1/price?country=RU&lang=ru&ids="+gReq.GameId, &resp)
+	requests.MakeRequest("https://api.ec.nintendo.com/v1/price?country=RU&lang=ru&ids="+gReq.GameId, &resp)
 	fmt.Println(resp)
 	gReq.ResponseChannel <- resp
 }
