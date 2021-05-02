@@ -9,7 +9,8 @@ import (
 )
 
 func OpenFile(filename string) *os.File {
-	f, err := os.OpenFile(filename, os.O_RDWR, 0777)
+	//f, err := os.OpenFile(filename, os.O_RDWR, 0777)
+	f, err := os.Create(filename)
 	if err != nil {
 		log.Fatal("ошибочка при открытии файла: ", err)
 	}

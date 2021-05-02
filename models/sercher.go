@@ -7,7 +7,7 @@ import (
 	"regexp"
 )
 
-func searcher(gameName string) string {
+func searcher(gameName string, idChannel chan string) {
 	searchUrl := createUrl(gameName)
 	response := makeRequest(searchUrl)
 	typedGamesSlice := getTypedGamesSlice(response)
@@ -15,7 +15,8 @@ func searcher(gameName string) string {
 	gameId := getGameId(game)
 	fmt.Println(game["title"])
 	fmt.Println(gameId)
-	return gameId
+	idChannel <- gameId
+	//return gameId
 }
 
 func makeRequest(url string) Response {

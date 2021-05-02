@@ -1,22 +1,19 @@
 package models
 
-type GamesMap map[string]GameFromJson
+import "fmt"
 
-func (gamesMap GamesMap) GetGameIds() GamesMap {
-	for key, val := range gamesMap {
-		if !val.isIdExist() {
-			val["id"] = searcher(key)
-		}
+type GamesSlice []GameFromJson
+
+func (gamesMap GamesSlice) GetGameIds() GamesSlice {
+	requestChannels := make([]chan string, 0)
+	for ind, value := range gamesMap {
+		fmt.Println(ind)
+		requestChannels = append(requestChannels, make(chan string))
+		go searcher(value["name"], requestChannels[ind])
+	}
+	for index, ch := range requestChannels {
+		fmt.Println(index)
+		gamesMap[index]["id"] = <-ch
 	}
 	return gamesMap
-}
-
-func (gamesMap GamesMap) IsAllGamesHasId() bool {
-	for _, val := range gamesMap {
-		if !val.isIdExist() {
-			return false
-		}
-
-	}
-	return true
 }

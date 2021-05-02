@@ -1,16 +1,30 @@
-{
-  "Minecraft": {
-    "id": "70010000000963"
+[
+  {
+    "id": "70010000000963",
+    "name": "Minecraft"
   },
-  "Super Mario Odyssey": {
-    "id": "70010000000127"
+  {
+    "id": "70010000003087",
+    "name": "The Elder Scrolls V: Skyrim"
   },
-  "The Elder Scrolls V: Skyrim": {
-    "id": "70010000003087"
+  {
+    "id": "70010000000023",
+    "name": "The Legend of Zelda: Breath of the Wild"
   },
-  "The Legend of Zelda: Breath of the Wild": {
-    "id": ""
+  {
+    "id": "70010000000127",
+    "name": "Super Mario Odyssey"
+  },
+  {
+    "id": "70010000034726",
+    "name": "Ori and the Will of the Wisps"
+  },
+  {
+    "id": "70010000018678",
+    "name": "Super Mario Maker 2"
+  },
+  {
+    "id": "70010000027620",
+    "name": "Animal Crossing: New Horizons"
   }
-}0000023"
-  }
-}
+]
