@@ -3,25 +3,9 @@ package environment
 import (
 	"eshop-parser/models"
 	"eshop-parser/repository"
-	"fmt"
+	"eshop-parser/utils"
 	"io"
 )
-
-func getGameMap(reader io.Reader, writer io.WriterAt) models.GamesSlice {
-	gameJsonMap := models.GamesSlice{}
-	repository.FillJsonMap(reader, &gameJsonMap)
-	checkIsAllGameIdIsExist(gameJsonMap, writer)
-	fmt.Println(gameJsonMap)
-	return gameJsonMap
-}
-
-func checkIsAllGameIdIsExist(gamesMap models.GamesSlice, jsonFile io.WriterAt) models.GamesSlice {
-
-	gamesMap.GetGameIds()
-	repository.WriteFile(jsonFile, gamesMap)
-
-	return gamesMap
-}
 
 func CreateSliceOfGameRequestFromJson(body io.ReadCloser, jsonFileName string) []models.GameRequest {
 	gameJsonFile := repository.OpenFile(jsonFileName)
@@ -32,4 +16,17 @@ func CreateSliceOfGameRequestFromJson(body io.ReadCloser, jsonFileName string) [
 		requestSlice = append(requestSlice, request)
 	}
 	return requestSlice
+}
+
+func getGameMap(reader io.Reader, writer io.WriterAt) models.GamesSlice {
+	gameSlice := models.GamesSlice{}
+	utils.FillJson(reader, &gameSlice)
+	checkIsAllGameIdIsExist(gameSlice, writer)
+	return gameSlice
+}
+
+func checkIsAllGameIdIsExist(gamesMap models.GamesSlice, jsonFile io.WriterAt) models.GamesSlice {
+	gamesMap.GetGameIds()
+	repository.WriteFile(jsonFile, gamesMap)
+	return gamesMap
 }

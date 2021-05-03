@@ -1,4 +1,4 @@
-package models
+package searcher
 
 type Response map[string]map[string]interface{}
 

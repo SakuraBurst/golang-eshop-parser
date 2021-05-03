@@ -3,7 +3,6 @@ package controller
 import (
 	"encoding/json"
 	"eshop-parser/workers"
-	"fmt"
 	"net/http"
 )
 
@@ -12,8 +11,7 @@ var GamePricesService http.HandlerFunc = func(writer http.ResponseWriter, reques
 	if request.Method != http.MethodPost {
 		return
 	}
-	fmt.Println(request.Body)
-	respose := workers.GetGamePricesFromJson(request.Body)
-	encoder.Encode(respose)
+	response := workers.GetGamePricesFromJson(request.Body)
+	encoder.Encode(response)
 	return
 }

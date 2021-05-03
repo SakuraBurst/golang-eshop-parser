@@ -1,22 +1,20 @@
-package models
+package searcher
 
 import (
 	"eshop-parser/requests"
+	"eshop-parser/utils"
 	"fmt"
 	"net/url"
 	"regexp"
 )
 
-func searcher(gameName string, idChannel chan string) {
+func Searcher(gameName string, idChannel chan string) {
 	searchUrl := createUrl(gameName)
 	response := makeRequest(searchUrl)
 	typedGamesSlice := getTypedGamesSlice(response)
 	game := getGame(typedGamesSlice, gameName)
 	gameId := getGameId(game)
-	fmt.Println(game["title"])
-	fmt.Println(gameId)
 	idChannel <- gameId
-	//return gameId
 }
 
 func makeRequest(url string) Response {
@@ -27,18 +25,8 @@ func makeRequest(url string) Response {
 
 func getTypedGamesSlice(resp Response) ResponseGameSlice {
 	untypedGamesSlice := resp["response"]["docs"]
-	var semiTypedGamesSlice []interface{}
 	var typedGamesSlice ResponseGameSlice
-	switch typedSlice := untypedGamesSlice.(type) {
-	case []interface{}:
-		semiTypedGamesSlice = typedSlice
-		for _, v := range semiTypedGamesSlice {
-			switch typedMap := v.(type) {
-			case map[string]interface{}:
-				typedGamesSlice = append(typedGamesSlice, typedMap)
-			}
-		}
-	}
+	utils.ReDecodeToNewJson(untypedGamesSlice, &typedGamesSlice)
 	return typedGamesSlice
 }
 
@@ -74,6 +62,5 @@ func getGameId(game ResponseGame) string {
 	case []interface{}:
 		return idSlice[0].(string)
 	}
-	//getGame(response, gameName)
 	return ""
 }

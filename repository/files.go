@@ -2,7 +2,6 @@ package repository
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -33,14 +32,5 @@ func WriteFile(file io.WriterAt, content interface{}) {
 	_, err = file.WriteAt(newJson, 0)
 	if err != nil {
 		log.Fatal(err)
-	}
-}
-
-func FillJsonMap(requestJson io.Reader, file interface{}) {
-	fmt.Println(requestJson)
-	decoder := json.NewDecoder(requestJson)
-	err := decoder.Decode(&file)
-	if err != nil {
-		log.Fatal("ошибочка при чтении файла", err)
 	}
 }

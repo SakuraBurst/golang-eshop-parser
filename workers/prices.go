@@ -3,7 +3,6 @@ package workers
 import (
 	"eshop-parser/environment"
 	"eshop-parser/models"
-	"fmt"
 	"io"
 )
 
@@ -18,6 +17,5 @@ func GetGamePricesFromJson(body io.ReadCloser) []models.GameResponse {
 	for i := range responseSlice {
 		responseSlice[i].GameInfo = <-requestSlice[i].ResponseChannel
 	}
-	fmt.Println(responseSlice)
 	return responseSlice
 }

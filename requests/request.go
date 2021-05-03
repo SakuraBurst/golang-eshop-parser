@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"eshop-parser/utils"
 	"log"
 	"net/http"
 )
@@ -10,6 +11,6 @@ func MakeRequest(url string, response interface{}) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	decodeResponse(httpResponse.Body, &response)
+	utils.FillJson(httpResponse.Body, &response)
 	defer httpResponse.Body.Close()
 }
