@@ -17,6 +17,14 @@ func Searcher(gameName string, idChannel chan string) {
 	idChannel <- gameId
 }
 
+func createUrl(gameName string) string {
+	var originalUrl string = "https://searching.nintendo-europe.com/ru/select?"
+	params := url.Values{}
+	params.Add("fq", "type:GAME AND ((playable_on_txt:\"HAC\"))")
+	params.Add("q", gameName)
+	return originalUrl + params.Encode()
+}
+
 func makeRequest(url string) Response {
 	var response Response
 	requests.MakeRequest(url, &response)
@@ -28,14 +36,6 @@ func getTypedGamesSlice(resp Response) ResponseGameSlice {
 	var typedGamesSlice ResponseGameSlice
 	utils.ReDecodeToNewJson(untypedGamesSlice, &typedGamesSlice)
 	return typedGamesSlice
-}
-
-func createUrl(gameName string) string {
-	var originalUrl string = "https://searching.nintendo-europe.com/ru/select?"
-	params := url.Values{}
-	params.Add("fq", "type:GAME AND ((playable_on_txt:\"HAC\"))")
-	params.Add("q", gameName)
-	return originalUrl + params.Encode()
 }
 
 func getGame(gamesSlice ResponseGameSlice, gameName string) ResponseGame {

@@ -1,28 +1,21 @@
 package models
 
 import (
-	"eshop-parser/requests"
+	"eshop-parser/searcher"
 )
 
-type GameRequest struct {
-	ResponseChannel chan map[string]interface{}
-	GameName        string
-	GameId          string
-}
-
-type GameResponse struct {
-	GameName string                 `json:"game_name"`
-	GameInfo map[string]interface{} `json:"game_info"`
-}
-
-func (gReq *GameRequest) Request() {
-	var resp map[string]interface{}
-	requests.MakeRequest("https://api.ec.nintendo.com/v1/price?country=RU&lang=ru&ids="+gReq.GameId, &resp)
-	gReq.ResponseChannel <- resp
-}
+type GamesSlice []GameFromJson
 
 type GameFromJson map[string]string
 
-func (game GameFromJson) isIdExist() bool {
-	return len(game["id"]) > 0
+func (gamesSlice GamesSlice) GetGameIds() GamesSlice {
+	requestChannels := make([]chan string, 0)
+	for ind, value := range gamesSlice {
+		requestChannels = append(requestChannels, make(chan string))
+		go searcher.Searcher(value["name"], requestChannels[ind])
+	}
+	for index, ch := range requestChannels {
+		gamesSlice[index]["id"] = <-ch
+	}
+	return gamesSlice
 }
