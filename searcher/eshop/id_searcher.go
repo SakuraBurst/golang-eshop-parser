@@ -1,16 +1,21 @@
-package searcher
+package eshop
 
 import (
 	"eshop-parser/requests"
+	"eshop-parser/searcher"
 	"eshop-parser/utils"
 	"fmt"
 	"net/url"
 	"regexp"
 )
 
-func Searcher(gameName string, idChannel chan string) {
+func SearchForId(gameName string, idChannel chan string) {
 	searchUrl := createUrl(gameName)
-	response := makeRequest(searchUrl)
+	response, err := makeRequest(searchUrl)
+	if err != nil {
+		idChannel <- ""
+		return
+	}
 	typedGamesSlice := getTypedGamesSlice(response)
 	game := getGame(typedGamesSlice, gameName)
 	gameId := getGameId(game)
@@ -18,27 +23,27 @@ func Searcher(gameName string, idChannel chan string) {
 }
 
 func createUrl(gameName string) string {
-	var originalUrl string = "https://searching.nintendo-europe.com/ru/select?"
+	originalUrl := "https://searching.nintendo-europe.com/ru/select?"
 	params := url.Values{}
 	params.Add("fq", "type:GAME AND ((playable_on_txt:\"HAC\"))")
 	params.Add("q", gameName)
 	return originalUrl + params.Encode()
 }
 
-func makeRequest(url string) Response {
-	var response Response
-	requests.MakeRequest(url, &response)
-	return response
+func makeRequest(url string) (searcher.Response, error) {
+	var response searcher.Response
+	err := requests.MakeRequest(url, &response)
+	return response, err
 }
 
-func getTypedGamesSlice(resp Response) ResponseGameSlice {
+func getTypedGamesSlice(resp searcher.Response) searcher.ResponseGameSlice {
 	untypedGamesSlice := resp["response"]["docs"]
-	var typedGamesSlice ResponseGameSlice
+	var typedGamesSlice searcher.ResponseGameSlice
 	utils.ReDecodeToNewJson(untypedGamesSlice, &typedGamesSlice)
 	return typedGamesSlice
 }
 
-func getGame(gamesSlice ResponseGameSlice, gameName string) ResponseGame {
+func getGame(gamesSlice searcher.ResponseGameSlice, gameName string) searcher.ResponseGame {
 	//Loop:
 	for i, v := range gamesSlice {
 		title := v["title"]
@@ -54,10 +59,10 @@ func getGame(gamesSlice ResponseGameSlice, gameName string) ResponseGame {
 			}
 		}
 	}
-	return ResponseGame{}
+	return searcher.ResponseGame{}
 }
 
-func getGameId(game ResponseGame) string {
+func getGameId(game searcher.ResponseGame) string {
 	switch idSlice := game["nsuid_txt"].(type) {
 	case []interface{}:
 		return idSlice[0].(string)

@@ -2,15 +2,15 @@ package requests
 
 import (
 	"eshop-parser/utils"
-	"log"
 	"net/http"
 )
 
-func MakeRequest(url string, response interface{}) {
+func MakeRequest(url string, response interface{}) error {
 	httpResponse, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	utils.FillJson(httpResponse.Body, &response)
 	defer httpResponse.Body.Close()
+	return nil
 }

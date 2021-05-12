@@ -1,17 +1,60 @@
 package models
 
-type RequestMaker interface {
-	MakeRequest(url string, resp interface{})
+import (
+	"eshop-parser/searcher/eshop"
+)
+
+type Requester interface {
+	GetIds() []Game
+	GetPrices() []Game
 }
 
-type Request struct {
-	ResponseChannel chan interface{}
-	Url             string
-	RequestMaker    RequestMaker
-	Resp            interface{}
+type EshopGameRequester struct {
+	GameSlice []Game
 }
 
-func (aReq *Request) Request() {
-	aReq.RequestMaker.MakeRequest(aReq.Url, aReq.Resp)
-	aReq.ResponseChannel <- aReq.Resp
+func (gReq *EshopGameRequester) GetIds() []Game {
+	requestChannels := make([]chan string, 0)
+	for ind, value := range gReq.GameSlice {
+		requestChannels = append(requestChannels, make(chan string))
+		go eshop.SearchForId(value.GameName, requestChannels[ind])
+	}
+	for index, ch := range requestChannels {
+		gReq.GameSlice[index].GameId = <-ch
+	}
+	gReq.GameSlice = clearEmptyIds(gReq.GameSlice)
+	return gReq.GameSlice
+}
+
+func (gReq EshopGameRequester) GetPrices() []Game {
+	requestChannels := make([]chan map[string]interface{}, 0)
+	for ind := range gReq.GameSlice {
+		requestChannels = append(requestChannels, make(chan map[string]interface{}))
+		go eshop.SearchForPrice(gReq.GameSlice[ind].GameId, requestChannels[ind])
+	}
+	for index, ch := range requestChannels {
+		gReq.GameSlice[index].GameInfo = <-ch
+	}
+	gReq.GameSlice = clearEmptyGameInfos(gReq.GameSlice)
+	return gReq.GameSlice
+}
+
+func clearEmptyIds(games []Game) []Game {
+	var filtredGames []Game
+	for i := 0; i < len(games); i++ {
+		if games[i].GameId != "" {
+			filtredGames = append(filtredGames, games[i])
+		}
+	}
+	return filtredGames
+}
+
+func clearEmptyGameInfos(games []Game) []Game {
+	var filtredGames []Game
+	for i := 0; i < len(games); i++ {
+		if games[i].GameInfo != nil {
+			filtredGames = append(filtredGames, games[i])
+		}
+	}
+	return filtredGames
 }
