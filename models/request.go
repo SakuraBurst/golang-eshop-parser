@@ -1,7 +1,7 @@
 package models
 
 import (
-	"eshop-parser/searcher/eshop"
+	"eshop-parser/searcher"
 )
 
 type Requester interface {
@@ -11,13 +11,14 @@ type Requester interface {
 
 type EshopGameRequester struct {
 	GameSlice []Game
+	Searcher  searcher.Searcher
 }
 
 func (gReq *EshopGameRequester) GetIds() []Game {
 	requestChannels := make([]chan string, 0)
 	for ind, value := range gReq.GameSlice {
 		requestChannels = append(requestChannels, make(chan string))
-		go eshop.SearchForId(value.GameName, requestChannels[ind])
+		go gReq.Searcher.SearchForId(value.GameName, requestChannels[ind])
 	}
 	for index, ch := range requestChannels {
 		gReq.GameSlice[index].GameId = <-ch
@@ -30,7 +31,7 @@ func (gReq EshopGameRequester) GetPrices() []Game {
 	requestChannels := make([]chan map[string]interface{}, 0)
 	for ind := range gReq.GameSlice {
 		requestChannels = append(requestChannels, make(chan map[string]interface{}))
-		go eshop.SearchForPrice(gReq.GameSlice[ind].GameId, requestChannels[ind])
+		go gReq.Searcher.SearchForPrice(gReq.GameSlice[ind].GameId, requestChannels[ind])
 	}
 	for index, ch := range requestChannels {
 		gReq.GameSlice[index].GameInfo = <-ch

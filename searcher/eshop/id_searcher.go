@@ -9,7 +9,7 @@ import (
 	"regexp"
 )
 
-func SearchForId(gameName string, idChannel chan string) {
+func (s EshopSearcher) SearchForId(gameName string, idChannel chan string) {
 	searchUrl := createUrl(gameName)
 	response, err := makeRequest(searchUrl)
 	if err != nil {
