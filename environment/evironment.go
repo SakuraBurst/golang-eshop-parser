@@ -7,7 +7,7 @@ import (
 	"io"
 )
 
-func CreateSliceOfEshopGameRequestFromJson(body io.ReadCloser) models.Requester {
+func CreateEshopGameRequesterFromJson(body io.Reader) models.Requester {
 	gameSlice := getGameSlice(body)
 	gameRequester := models.EshopGameRequester{GameSlice: gameSlice, Searcher: eshop.EshopSearcher{}}
 	return &gameRequester

@@ -6,8 +6,8 @@ import (
 	"io"
 )
 
-func GetGamePricesFromJson(body io.ReadCloser) []models.Game {
-	gameRequester := environment.CreateSliceOfEshopGameRequestFromJson(body)
+func GetGamePricesFromJson(body io.Reader) []models.Game {
+	gameRequester := environment.CreateEshopGameRequesterFromJson(body)
 	gameRequester.GetIds()
 	return gameRequester.GetPrices()
 }

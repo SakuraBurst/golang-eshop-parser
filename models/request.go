@@ -7,6 +7,7 @@ import (
 type Requester interface {
 	GetIds() []Game
 	GetPrices() []Game
+	GetGameSlice() []Game
 }
 
 type EshopGameRequester struct {
@@ -37,6 +38,10 @@ func (gReq EshopGameRequester) GetPrices() []Game {
 		gReq.GameSlice[index].GameInfo = <-ch
 	}
 	gReq.GameSlice = clearEmptyGameInfos(gReq.GameSlice)
+	return gReq.GameSlice
+}
+
+func (gReq EshopGameRequester) GetGameSlice() []Game {
 	return gReq.GameSlice
 }
 
